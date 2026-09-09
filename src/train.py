@@ -1,7 +1,6 @@
 import pandas as pd
 import re
-import pickle
-
+import joblib
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -58,7 +57,7 @@ transformers = ColumnTransformer(transformers = [
     ("title", TfidfVectorizer(stop_words = "english"), "title"),
     ("location", OneHotEncoder(handle_unknown = "ignore"), ["location"]),
     ("description", TfidfVectorizer(stop_words = "english", ngram_range=(1,2), min_df = 0.01, max_df = 0.95), "description"),
-    ("function", OneHotEncoder(), ["function"]),
+    ("function", OneHotEncoder(handle_unknown = "ignore"), ["function"]),
     ("industry", TfidfVectorizer(stop_words = "english"), "industry")
 ])
 
@@ -92,5 +91,9 @@ print(classification_report(y_test, y_predict))
 # =========================
 # 8. Save model
 # =========================
-# filename = 'finalized_model.pkl'
-# pickle.dump(final_model, open(filename, 'wb'))
+#
+# joblib.dump(
+#     final_model, "final_model.pkl"
+# )
+#
+# print("Model saved successfully.")
