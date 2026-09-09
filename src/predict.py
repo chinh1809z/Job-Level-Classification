@@ -1,21 +1,58 @@
 import joblib
 import pandas as pd
+from pathlib import Path
 
 
-# Load model
-model = joblib.load("../models/final_model.pkl")
+# =========================
+# 1. Load model
+# =========================
 
-# New job posting
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+model = joblib.load(
+    BASE_DIR / "models" / "final_model.pkl"
+)
+
+
+# =========================
+# 2. Get user input
+# =========================
+
+print("=== Job Career Level Classification ===")
+
+title = input("Job title: ")
+
+location = input("Location: ")
+
+description = input("Description: ")
+
+function = input("Function: ")
+
+industry = input("Industry: ")
+
+
+# =========================
+# 3. Create DataFrame
+# =========================
+
 new_job = pd.DataFrame([{
-    "title": "Senior Software Engineer",
-    "location": "Berlin",
-    "description": "We are looking for a senior software engineer to develop and maintain software applications.",
-    "function": "IT",
-    "industry": "Information Technology"
+    "title": title,
+    "location": location,
+    "description": description,
+    "function": function,
+    "industry": industry
 }])
 
 
-# Prediction
+# =========================
+# 4. Prediction
+# =========================
+
 prediction = model.predict(new_job)
 
-print("Predicted career level:", prediction[0])
+
+# =========================
+# 5. Display result
+# =========================
+
+print("\nPredicted career level:", prediction[0])

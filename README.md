@@ -514,7 +514,3 @@ Possible improvements include:
 ## Author
 
 **Pham Trung Chinh**
-
-Computer Science / Information Technology Student
-
-Interested in Machine Learning, Artificial Intelligence, and Software Engineering.

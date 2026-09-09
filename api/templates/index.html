@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Job Career Level Classification</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Job Career Level Classification</h1>
+
+        <p class="subtitle">
+            Predict the career level of a job posting
+        </p>
+
+        <form action="/predict" method="POST">
+
+            <label>Job Title</label>
+            <input type="text" name="title" required>
+
+            <label>Location</label>
+            <input type="text" name="location" required>
+
+            <label>Description</label>
+            <textarea name="description"
+                      rows="8"
+                      required></textarea>
+
+            <label>Function</label>
+            <input type="text" name="function" required>
+
+            <label>Industry</label>
+            <input type="text" name="industry" required>
+
+            <button type="submit">Predict Career Level</button>
+
+        </form>
+
+
+        {% if prediction %}
+
+        <div class="result">
+
+            <h2>Prediction Result</h2>
+
+            <p>
+                Predicted Career Level
+            </p>
+
+            <strong>{{ prediction }}</strong>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</body>
+
+</html>
