@@ -1,65 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Career Level Classification</title>
-
+    <!-- Thêm font chữ hiện đại -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
-
     <div class="container">
-
-        <h1>Job Career Level Classification</h1>
-
-        <p class="subtitle">
-            Predict the career level of a job posting
-        </p>
-
-        <form action="/predict" method="POST">
-
-            <label>Job Title</label>
-            <input type="text" name="title" required>
-
-            <label>Location</label>
-            <input type="text" name="location" required>
-
-            <label>Description</label>
-            <textarea name="description"
-                      rows="8"
-                      required></textarea>
-
-            <label>Function</label>
-            <input type="text" name="function" required>
-
-            <label>Industry</label>
-            <input type="text" name="industry" required>
-
-            <button type="submit">Predict Career Level</button>
-
-        </form>
-
-
-        {% if prediction %}
-
-        <div class="result">
-
-            <h2>Prediction Result</h2>
-
-            <p>
-                Predicted Career Level
-            </p>
-
-            <strong>{{ prediction }}</strong>
-
+        <div class="header">
+            <h1>Job Level Classifier</h1>
+            <p class="subtitle">Classifying job levels from recruitment information</p>
         </div>
 
+        <form action="/predict" method="POST" class="job-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Job Title</label>
+                    <input type="text" name="title" placeholder="e.g., Senior Software Engineer" required>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="location" placeholder="e.g., Berlin, Germany" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="5" placeholder="Paste the job description here..." required></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Function</label>
+                    <input type="text" name="function" placeholder="e.g., Engineering" required>
+                </div>
+                <div class="form-group">
+                    <label>Industry</label>
+                    <input type="text" name="industry" placeholder="e.g., Technology" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Classify Career Level</button>
+        </form>
+
+        {% if prediction %}
+        <div class="result fade-in">
+            <h2>Kết quả dự đoán</h2>
+            <p>Cấp bậc công việc phù hợp nhất là:</p>
+            <div class="prediction-badge">{{ prediction }}</div>
+        </div>
         {% endif %}
-
     </div>
-
 </body>
-
 </html>
