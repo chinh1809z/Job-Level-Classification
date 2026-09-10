@@ -1,36 +1,66 @@
-# Job Career Level Classification
+# Job Level Classification
 
-A Machine Learning project for predicting the career level of a job posting based on its title, description, location, function, and industry.
+A Machine Learning web application for predicting the **career level of a job posting** from recruitment information such as job title, description, location, function, and industry.
 
-The project follows an end-to-end Machine Learning workflow, including data exploration, preprocessing, model comparison, class imbalance handling, error analysis, model serialization, and REST API deployment.
+The project uses job-posting data from the **German job market** and follows an end-to-end Machine Learning workflow: data exploration, preprocessing, text feature extraction, model comparison, class-imbalance analysis, error analysis, model serialization, and REST API deployment.
 
 ---
+
+## Web Demo
+
+The trained model is integrated into a simple web interface where users can enter job-posting information and receive a predicted career level.
+
+![Job Level Classifier Web Interface](assets/web-demo.png)
+
+### Example Input
+
+The interface accepts:
+
+- **Job Title** — e.g. `Senior Software Engineer`
+- **Location** — e.g. `Berlin, Germany`
+- **Description** — the job description
+- **Function** — e.g. `Engineering`
+- **Industry** — e.g. `Technology`
+
+After clicking **Classify Career Level**, the frontend sends the input to the Flask REST API, which loads the trained Machine Learning pipeline and returns the predicted career level.
+
+### System Flow
+
+```text
+User
+ │
+ ▼
+Web Interface
+(HTML / CSS / JavaScript)
+ │
+ │ HTTP POST /predict
+ ▼
+Flask REST API
+ │
+ ▼
+Saved ML Pipeline
+ │
+ ├── TF-IDF
+ ├── One-Hot Encoding
+ ├── Feature Selection
+ └── LinearSVC
+ │
+ ▼
+Predicted Career Level
+ │
+ ▼
+Web Interface
+```
+
+![Job Level Classifier Web Demo](assets/web-demo.png)
 
 ## Project Overview
 
-Recruitment platforms contain a large number of job postings with different career levels. Automatically classifying job postings can help organize job listings and support recruitment-related applications.
+Recruitment platforms contain a large number of job postings with different career levels. Automatically classifying these postings can help organize job listings and can serve as a component of recruitment-related applications.
 
-The goal of this project is to build a multiclass classification model that predicts the career level of a job posting from its available information.
+The goal of this project is to build a **multiclass classification model** that predicts the career level of a job posting from the information available in the posting.
 
 ### Input Features
-
-- `title` — Job title
-- `location` — Job location
-- `description` — Job description
-- `function` — Job function
-- `industry` — Industry
-
-### Target
-
-- `career_level`
-
-The task is formulated as a **multiclass classification problem**.
-
----
-
-## Dataset
-
-The dataset contains **8,074 job postings** and 6 columns.
 
 | Feature | Description |
 |---|---|
@@ -39,65 +69,58 @@ The dataset contains **8,074 job postings** and 6 columns.
 | `description` | Job description |
 | `function` | Job function |
 | `industry` | Industry |
-| `career_level` | Target career level |
 
-The dataset consists of job postings from the German job market.
+### Target
+
+| Target | Description |
+|---|---|
+| `career_level` | Career level of the job posting |
+
+This is formulated as a **multiclass classification problem**.
+
+---
+
+## Dataset
+
+The dataset contains **8,074 job postings** and 6 columns.
+
+The data consists of job postings from the **German job market**.
+
+| Feature | Type | Description |
+|---|---|---|
+| `title` | Text | Job title |
+| `location` | Categorical/Text | Job location |
+| `description` | Text | Job description |
+| `function` | Categorical/Text | Job function |
+| `industry` | Categorical/Text | Industry |
+| `career_level` | Target | Career-level class |
 
 ### Data Quality
 
 During Exploratory Data Analysis:
 
-- 8,074 rows were identified.
-- 1 missing value was found.
-- 21 duplicate records were identified.
-- The target variable is highly imbalanced.
+- **8,074** job postings were identified.
+- **1** missing value was found.
+- **21** duplicate records were identified.
+- The target variable is **highly imbalanced**.
+- Some career-level classes contain very few samples, making them more difficult to learn and evaluate reliably.
 
-Some career-level classes contain very few samples, making them difficult to learn and evaluate reliably.
-
----
-
-## Project Structure
-
-```text
-Job-Level-Classification/
-│
-├── api/
-│   ├── app.py
-│   └── test_api.py
-│
-├── models/
-│   └── final_model.pkl
-│
-├── notebooks/
-│   ├── 01_eda.ipynb
-│   ├── 02_baseline.ipynb
-│   ├── 03_model_comparison.ipynb
-│   ├── 04_imbalance_experiment.ipynb
-│   └── 05_error_analysis.ipynb
-│
-├── src/
-│   ├── train.py
-│   └── predict.py
-│
-├── .gitignore
-├── requirements.txt
-└── README.md
-```
+Because the dataset is imbalanced, **Macro F1-score** is used as the primary evaluation metric rather than relying only on accuracy.
 
 ---
 
-# Machine Learning Workflow
+## Machine Learning Workflow
 
-## 1. Exploratory Data Analysis
+### 1. Exploratory Data Analysis
 
-The first stage focuses on understanding the dataset and identifying potential problems before training the models.
+The first stage focuses on understanding the dataset and identifying potential problems before training.
 
-Main tasks include:
+Main tasks:
 
 - Inspecting dataset dimensions
 - Checking missing values
 - Detecting duplicate records
-- Analyzing the target distribution
+- Analyzing target distribution
 - Examining categorical features
 - Investigating class imbalance
 
@@ -109,24 +132,24 @@ notebooks/01_eda.ipynb
 
 ---
 
-## 2. Baseline Model
+### 2. Baseline Model
 
 A baseline Machine Learning pipeline was created to establish an initial performance benchmark.
 
-### Text Features
+#### Text Features
 
 TF-IDF Vectorization was applied to:
 
 - `title`
 - `description`
 
-The description feature also uses unigram and bigram representations:
+The description also uses unigram and bigram representations:
 
 ```python
 ngram_range=(1, 2)
 ```
 
-### Categorical Features
+#### Categorical Features
 
 One-Hot Encoding was applied to:
 
@@ -134,9 +157,13 @@ One-Hot Encoding was applied to:
 - `function`
 - `industry`
 
-### Baseline Classifier
+#### Baseline Classifier
 
-The baseline model uses Logistic Regression.
+The baseline model uses:
+
+```text
+Logistic Regression
+```
 
 Notebook:
 
@@ -146,15 +173,15 @@ notebooks/02_baseline.ipynb
 
 ---
 
-## 3. Model Comparison
+### 3. Model Comparison
 
-Three different Machine Learning algorithms were compared using the same dataset split and preprocessing pipeline:
+Three Machine Learning algorithms were compared using the same dataset split and preprocessing pipeline:
 
 - Logistic Regression
 - LinearSVC
 - Random Forest
 
-Because the dataset is highly imbalanced, **Macro F1-score** was used as the primary evaluation metric.
+Because the dataset is highly imbalanced, **Macro F1-score** was selected as the primary metric.
 
 ### Results
 
@@ -164,9 +191,9 @@ Because the dataset is highly imbalanced, **Macro F1-score** was used as the pri
 | **LinearSVC** | **0.759** | **0.668** | **0.749** |
 | Random Forest | 0.760 | 0.417 | 0.730 |
 
-Although Logistic Regression achieved slightly higher accuracy, LinearSVC achieved a substantially higher Macro F1-score.
+Although Logistic Regression achieved slightly higher accuracy, **LinearSVC achieved a substantially higher Macro F1-score**.
 
-Therefore, **LinearSVC was selected as the final model** because Macro F1 is more informative for this imbalanced multiclass classification problem.
+Therefore, LinearSVC was selected as the final model because Macro F1 is more informative for this imbalanced multiclass classification problem.
 
 Notebook:
 
@@ -176,25 +203,23 @@ notebooks/03_model_comparison.ipynb
 
 ---
 
-## 4. Handling Class Imbalance
+### 4. Handling Class Imbalance
 
 The target variable contains significant class imbalance, with some career levels having very few samples.
 
-Different approaches were investigated, including:
+The following approaches were investigated:
 
 - Original training setup
 - Class weighting
 - Random oversampling
 
-The experiments were used to understand how different imbalance-handling strategies affect classification performance, especially for minority classes.
-
-The final model uses class weighting:
+The final model uses:
 
 ```python
 LinearSVC(class_weight="balanced")
 ```
 
-This gives greater importance to minority classes during training.
+Class weighting gives greater importance to minority classes during training.
 
 Notebook:
 
@@ -204,9 +229,9 @@ notebooks/04_imbalance_experiment.ipynb
 
 ---
 
-## 5. Error Analysis
+### 5. Error Analysis
 
-A confusion matrix was used to investigate the model's predictions and identify the most common classification errors.
+A confusion matrix was used to investigate the model's predictions and identify common classification errors.
 
 The main confusion occurred between:
 
@@ -214,7 +239,7 @@ The main confusion occurred between:
 - `manager_team_leader`
 - `senior_specialist_or_project_manager`
 
-These career levels have overlapping terminology and responsibilities.
+These career levels can have overlapping terminology and responsibilities.
 
 For example, job postings containing terms such as:
 
@@ -226,7 +251,7 @@ For example, job postings containing terms such as:
 
 may belong to different career-level categories.
 
-This suggests that some classification errors are caused not only by model limitations, but also by ambiguity between the career-level labels themselves.
+This suggests that some errors are caused not only by model limitations, but also by ambiguity between the career-level labels themselves.
 
 Notebook:
 
@@ -236,7 +261,7 @@ notebooks/05_error_analysis.ipynb
 
 ---
 
-# Final Model
+## Final Model
 
 The final Machine Learning pipeline consists of:
 
@@ -277,13 +302,13 @@ The complete trained pipeline is serialized using `joblib`:
 models/final_model.pkl
 ```
 
-Because the preprocessing steps are included in the saved pipeline, new job postings can be passed directly to the model without manually applying TF-IDF, One-Hot Encoding, or feature selection.
+Because preprocessing is included in the saved pipeline, new job postings can be passed directly to the model without manually applying TF-IDF, One-Hot Encoding, or feature selection.
 
 ---
 
-# Prediction
+## Prediction
 
-The trained model can be loaded using:
+The trained model can be loaded with:
 
 ```python
 import joblib
@@ -311,7 +336,7 @@ print("Predicted career level:", prediction[0])
 
 The model returns the predicted career level.
 
-The prediction functionality is also implemented in:
+Prediction functionality is also implemented in:
 
 ```text
 src/predict.py
@@ -319,11 +344,11 @@ src/predict.py
 
 ---
 
-# REST API
+## REST API
 
-The trained model is exposed through a REST API built with Flask.
+The trained model is exposed through a REST API built with **Flask**.
 
-The API provides a `/predict` endpoint that accepts job posting information in JSON format.
+The API provides a `/predict` endpoint that accepts job-posting information in JSON format.
 
 ### Run the API
 
@@ -341,9 +366,7 @@ http://127.0.0.1:5000
 
 ### Health Check
 
-Send a GET request to:
-
-```text
+```http
 GET /
 ```
 
@@ -357,9 +380,7 @@ Example response:
 
 ### Prediction Endpoint
 
-Send a POST request to:
-
-```text
+```http
 POST /predict
 ```
 
@@ -383,8 +404,6 @@ Example response:
 }
 ```
 
-The API was tested successfully with an HTTP status code of `200`.
-
 API files:
 
 ```text
@@ -394,30 +413,30 @@ api/test_api.py
 
 ---
 
-# Installation
+## Installation
 
-Clone the repository:
+### 1. Clone the repository
 
 ```bash
 git clone <repository-url>
 cd Job-Level-Classification
 ```
 
-Create a virtual environment:
+### 2. Create a virtual environment
 
 ```bash
 python -m venv .venv
 ```
 
-Activate the environment.
+### 3. Activate the environment
 
-### Windows
+#### Windows
 
 ```bash
 .venv\Scripts\activate
 ```
 
-Install the required dependencies:
+### 4. Install dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -425,20 +444,49 @@ pip install -r requirements.txt
 
 ---
 
-# Technologies
+## Running the Application
+
+The project consists of a Machine Learning backend/API and a web interface.
+
+### Start the Flask API
+
+```bash
+python api/app.py
+```
+
+### Start the frontend
+
+If the frontend is composed of static HTML/CSS/JavaScript files, it can be served locally with:
+
+```bash
+python -m http.server 8000
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8000
+```
+
+Make sure the Flask API is running at the same time so that the frontend can send prediction requests to `/predict`.
+
+> The exact frontend start command may depend on the files included in the repository.
+
+---
+
+## Technologies
+
+### Programming & Data
 
 - Python
 - Pandas
 - NumPy
-- Scikit-learn
-- Imbalanced-learn
-- Joblib
-- Flask
-- Requests
 - Jupyter Notebook
 
-### Machine Learning Techniques
+### Machine Learning
 
+- Scikit-learn
+- Imbalanced-learn
 - TF-IDF
 - One-Hot Encoding
 - ColumnTransformer
@@ -449,11 +497,20 @@ pip install -r requirements.txt
 - Confusion Matrix
 - F1-score
 
+### Deployment & Web
+
+- Flask
+- REST API
+- HTML
+- CSS
+- JavaScript
+- Joblib
+
 ---
 
-# Evaluation
+## Evaluation
 
-The final model achieved:
+The selected final model achieved:
 
 | Metric | Score |
 |---|---:|
@@ -461,11 +518,11 @@ The final model achieved:
 | Macro F1 | **0.668** |
 | Weighted F1 | **0.749** |
 
-Macro F1 is considered the primary metric because the dataset contains highly imbalanced career-level classes.
+**Macro F1** is treated as the primary metric because the dataset contains highly imbalanced career-level classes.
 
 ---
 
-# Key Takeaways
+## Key Takeaways
 
 This project demonstrates an end-to-end Machine Learning workflow:
 
@@ -480,23 +537,25 @@ This project demonstrates an end-to-end Machine Learning workflow:
 9. Error analysis
 10. Model serialization
 11. REST API deployment
+12. Web-based prediction interface
 
-The project also demonstrates the importance of selecting evaluation metrics based on the characteristics of the dataset rather than relying solely on accuracy.
+The project also demonstrates why evaluation metrics should be selected based on the characteristics of the dataset rather than relying solely on accuracy.
 
 ---
 
-# Limitations
+## Limitations
 
-Several limitations remain in the current implementation:
+Several limitations remain:
 
 - Some career-level classes contain very few training examples.
 - Career-level boundaries can be semantically ambiguous.
 - The current text preprocessing uses English stop-word removal, while the dataset is from the German job market.
 - The dataset may not fully represent job postings from other countries or industries.
+- The current model is based on classical Machine Learning and does not use contextual transformer-based language representations.
 
 ---
 
-# Future Improvements
+## Future Improvements
 
 Possible improvements include:
 
@@ -505,12 +564,48 @@ Possible improvements include:
 - Hyperparameter optimization
 - Experimenting with transformer-based models
 - Improving handling of extremely rare classes
-- Building a web interface for the prediction API
+- Adding confidence/probability-style model explanations where appropriate
+- Improving the web interface and user feedback
 - Containerizing the application with Docker
 - Deploying the API to a cloud platform
+
+---
+
+## Project Structure
+
+```text
+Job-Level-Classification/
+│
+├── api/
+│   ├── app.py
+│   └── test_api.py
+│
+├── models/
+│   └── final_model.pkl
+│
+├── notebooks/
+│   ├── 01_eda.ipynb
+│   ├── 02_baseline.ipynb
+│   ├── 03_model_comparison.ipynb
+│   ├── 04_imbalance_experiment.ipynb
+│   └── 05_error_analysis.ipynb
+│
+├── src/
+│   ├── train.py
+│   └── predict.py
+│
+├── assets/
+│   └── web-demo.png
+│
+├── .gitignore
+├── requirements.txt
+└── README.md
+```
 
 ---
 
 ## Author
 
 **Pham Trung Chinh**
+
+Computer Science Student — HUST
